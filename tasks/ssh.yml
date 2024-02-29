@@ -1,0 +1,28 @@
+- name: Ensure SSH directory exists
+  tags:
+    - ssh
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/.ssh"
+    state: directory
+    mode: '0700'
+
+- name: Deploy SSH private key
+  tags:
+    - ssh
+  ansible.builtin.copy:
+    content: "{{ github_ssh_private_key }}"
+    dest: "{{ ansible_env.HOME }}/.ssh/id_rsa"
+    mode: '0600'
+- name: Deploy SSH public key
+  tags:
+    - ssh
+  ansible.builtin.copy:
+    content: "{{ github_ssh_public_key }}"
+    dest: "{{ ansible_env.HOME }}/.ssh/id_rsa.pub"
+    mode: '0644'
+
+- name: Add GitHub to known hosts
+  become: yes
+  ansible.builtin.shell: |
+    ssh-keyscan -H github.com >> "{{ ansible_env.HOME }}/.ssh/known_hosts"
+

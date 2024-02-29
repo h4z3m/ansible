@@ -1,0 +1,18 @@
+- hosts: localhost
+  become: true
+  vars_files:
+    - ./.ssh/github_secrets.yml
+  pre_tasks:
+    - name: Update cache
+      apt:
+        update_cache: true
+      tags:
+        - zsh
+        - node
+        - ssh
+        - dotfiles
+  tasks:
+    - include: tasks/zsh.yml
+    - include: tasks/node.yml
+    - include: tasks/ssh.yml
+    - include: tasks/dotfiles.yml

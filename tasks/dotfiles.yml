@@ -1,0 +1,18 @@
+- name: Install Stow
+  apt: name=stow
+  tags:
+    - dotfiles
+- name: Clone dotfiles
+  git:
+    repo: https://github.com/h4z3m/dotfiles
+    recursive: yes
+    version: main
+    dest: ~/.dotfiles
+  tags:
+    - dotfiles
+- name: Install dotfiles
+  become: true
+  command: >
+    stow -d ~/.dotfiles -t ~ -v
+  tags:
+    - dotfiles

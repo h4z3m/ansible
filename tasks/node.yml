@@ -1,0 +1,17 @@
+- name: Install Node
+  apt:
+    name: [nodejs, npm]
+  tags:
+    - node
+
+- name: Install n 
+  npm:
+    name: n
+    global: yes
+  tags:
+    - node
+
+- name: Switch to Node.js version 14
+  shell: n 14
+  tags:
+    - node
