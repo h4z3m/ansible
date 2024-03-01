@@ -13,6 +13,6 @@
 - name: Install dotfiles
   become: true
   command: >
-    stow -d ~/.dotfiles -t ~ -v
+    stow -v --restow */
   tags:
     - dotfiles
