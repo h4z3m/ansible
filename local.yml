@@ -11,8 +11,14 @@
         - node
         - ssh
         - dotfiles
+        - core
+        - git-personal
+        - install
+        - neovim
   tasks:
     - include: tasks/zsh.yml
     - include: tasks/node.yml
     - include: tasks/ssh.yml
     - include: tasks/dotfiles.yml
+    - include: tasks/core-setup.yml
+    - include: tasks/git-setup.yml
