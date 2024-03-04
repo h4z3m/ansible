@@ -16,8 +16,14 @@
     dest: "~/.oh-my-zsh/plugins/zsh-autosuggestions"
   tags:
     - zsh
+- name: Install zsh-vi-mode
+  ansible.builtin.git:
+    repo: "https://github.com/jeffreytse/zsh-vi-mode"
+    dest: "~/.oh-my-zsh/custom/plugins/zsh-vi-mode"
+  tags:
+    - zsh
 - name: Update zshrc
-  shell: sed -i 's/(git/(git zsh-autosuggestions/' ~/.zshrc
+  shell: sed -i 's/(git/(git zsh-autosuggestions zsh-vi-mode/' ~/.zshrc
   tags:
     - zsh
 - name: Change shell to zsh
