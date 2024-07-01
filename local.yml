@@ -16,9 +16,20 @@
         - install
         - neovim
   tasks:
-    - include: tasks/zsh.yml
-    - include: tasks/node.yml
-    - include: tasks/ssh.yml
-    - include: tasks/dotfiles.yml
-    - include: tasks/core-setup.yml
-    - include: tasks/git-setup.yml
+    - name: Include zsh tasks
+      include_tasks: tasks/zsh.yml
+
+    - name: Include node tasks
+      include_tasks: tasks/node.yml
+
+    - name: Include ssh tasks
+      include_tasks: tasks/ssh.yml
+
+    - name: Include dotfiles tasks
+      include_tasks: tasks/dotfiles.yml
+
+    - name: Include core setup tasks
+      include_tasks: tasks/core-setup.yml
+
+    - name: Include git setup tasks
+      include_tasks: tasks/git-setup.yml
