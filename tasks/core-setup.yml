@@ -1,34 +1,79 @@
-- name: Install System Packages 1 (build-essential, cmake, pkg-config, pthread)
+---
+- name: Install System Packages 1 on Debian (build-essential, cmake, pkg-config, pthread)
   become: true
   apt:
     name: ["build-essential", "cmake", "pkg-config", "libpthread-stubs0-dev"]
+  when: ansible_facts['os_family'] == "Debian"
   tags:
     - install
     - neovim
     - core
 
-- name: Install System Packages 2 (lua, unzip, libtool, libtool-bin, gettext)
+- name: Install System Packages 1 on Arch (base-devel, cmake, pkg-config, pthread)
   become: true
-  apt:
-    name: [ "lua5.1", "unzip", "libtool", "libtool-bin", "gettext"]
+  pacman:
+    name: ["base-devel", "cmake", "pkg-config", "pthread-stubs"]
+  when: ansible_facts['os_family'] == "Archlinux"
   tags:
     - install
     - neovim
     - core
 
-- name: Install System Packages 3 (the rest)
+- name: Install System Packages 2 on Debian (lua, unzip, libtool, libtool-bin, gettext)
   become: true
   apt:
-    name: [ "compton", "curl", "htop", "golang", "lsof", "i3", "ccache", "ninja-build", "python3-pip"]
+    name: ["lua5.1", "unzip", "libtool", "libtool-bin", "gettext"]
+  when: ansible_facts['os_family'] == "Debian"
+  tags:
+    - install
+    - neovim
+    - core
+
+- name: Install System Packages 2 on Arch (lua, unzip, libtool, gettext)
+  become: true
+  pacman:
+    name: ["lua", "unzip", "libtool", "gettext"]
+  when: ansible_facts['os_family'] == "Archlinux"
+  tags:
+    - install
+    - neovim
+    - core
+
+- name: Install System Packages 3 on Debian (the rest)
+  become: true
+  apt:
+    name: ["compton", "curl", "htop", "golang", "lsof", "i3", "ccache", "ninja-build", "python3-pip"]
+  when: ansible_facts['os_family'] == "Debian"
   tags:
     - install
     - core
 
-- name: Install Clang
+- name: Install System Packages 3 on Arch (the rest)
+  become: true
+  pacman:
+    name: ["compton", "curl", "htop", "go", "lsof", "i3-wm", "ccache", "ninja", "python-pip"]
+  when: ansible_facts['os_family'] == "Archlinux"
+  tags:
+    - install
+    - core
+
+- name: Install Clang on Debian
   become: true
   apt:
     name: ["clang", "clang-11", "clang-12", "clangd", "clangd-10", "clangd-11", "clangd-12"]
+  when: ansible_facts['os_family'] == "Debian"
   tags:
     - install
     - neovim
     - core
+
+- name: Install Clang on Arch
+  become: true
+  pacman:
+    name: ["clang", "clang-tools-extra"]
+  when: ansible_facts['os_family'] == "Archlinux"
+  tags:
+    - install
+    - neovim
+    - core
+

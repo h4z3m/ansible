@@ -1,17 +1,33 @@
-- name: Install Node
+- name: Install Node.js and npm on Debian-based systems
   apt:
     name: [nodejs, npm]
+    state: present
+    update_cache: yes
+  when: ansible_os_family == "Debian"
   tags:
     - node
+  become: yes
 
-- name: Install n 
+- name: Install Node.js and npm on Arch Linux
+  pacman:
+    name: [nodejs, npm]
+    state: present
+    update_cache: yes
+  when: ansible_os_family == "Archlinux"
+  tags:
+    - node
+  become: yes
+
+- name: Install n globally
   npm:
     name: n
     global: yes
   tags:
     - node
+  become: yes
 
 - name: Switch to Node.js version 14
   shell: n 14
   tags:
     - node
+  become: yes

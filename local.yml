@@ -1,11 +1,12 @@
+---
 - hosts: localhost
-  become: true
   vars_files:
-    - ./.ssh/github_secrets.yml
+    - ./.ssh/vault.yml
   pre_tasks:
-    - name: Update cache
+    - name: Update cache on Debian-based systems
       apt:
         update_cache: true
+      when: ansible_facts['os_family'] == "Debian"
       tags:
         - zsh
         - node
@@ -15,21 +16,33 @@
         - git-personal
         - install
         - neovim
+
+    - name: Update cache on Arch-based systems
+      pacman:
+        update_cache: true
+      when: ansible_facts['os_family'] == "Archlinux"
+      tags:
+        - zsh
+        - node
+        - ssh
+        - dotfiles
+        - core
+        - git-personal
+        - install
+        - neovim
+
   tasks:
     - name: Include zsh tasks
-      include_tasks: tasks/zsh.yml
+      import_tasks: tasks/zsh.yml
 
     - name: Include node tasks
-      include_tasks: tasks/node.yml
+      import_tasks: tasks/node.yml
 
     - name: Include ssh tasks
-      include_tasks: tasks/ssh.yml
+      import_tasks: tasks/ssh.yml
 
     - name: Include dotfiles tasks
-      include_tasks: tasks/dotfiles.yml
+      import_tasks: tasks/dotfiles.yml
 
     - name: Include core setup tasks
-      include_tasks: tasks/core-setup.yml
-
-    - name: Include git setup tasks
-      include_tasks: tasks/git-setup.yml
+      import_tasks: tasks/core-setup.yml

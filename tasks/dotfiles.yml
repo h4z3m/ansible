@@ -1,18 +1,77 @@
-- name: Install Stow
-  apt: name=stow
+- name: Install Stow on Debian-based systems
+  apt:
+    name: stow
+    state: present
   tags:
     - dotfiles
-- name: Clone dotfiles
-  git:
-    repo: https://github.com/h4z3m/dotfiles
+  become: yes
+  when: ansible_os_family == "Debian"
+
+- name: Install Stow on Arch Linux
+  pacman:
+    name: stow
+    state: present
+    update_cache: yes
+  tags:
+    - dotfiles
+  become: yes
+  when: ansible_os_family == "Archlinux"
+- name: Check if directory for dotfiles exists
+  ansible.builtin.stat:
+    path: "{{ ansible_env.HOME }}/.dotfiles"
+  register: dotfiles_dir
+  tags:
+    - dotfiles
+
+- name: Ensure directory for dotfiles exists
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/.dotfiles"
+    state: directory
+    mode: '0755'
+  when: not dotfiles_dir.stat.exists
+  tags:
+    - dotfiles
+
+- name: Clone dotfiles repository
+  ansible.builtin.git:
+    repo: 'https://github.com/h4z3m/dotfiles.git'
+    dest: "{{ ansible_env.HOME }}/.dotfiles"
     recursive: yes
-    version: main
-    dest: ~/.dotfiles
+    clone: yes
+    update: yes
   tags:
     - dotfiles
+
+- name: Debug contents of .dotfiles directory
+  ansible.builtin.shell: "ls -la {{ ansible_env.HOME }}/.dotfiles"
+  register: dotfiles_contents
+  when: dotfiles_dir.stat.exists
+  tags:
+    - dotfiles
+
+- name: Display contents of .dotfiles directory
+  ansible.builtin.debug:
+    var: dotfiles_contents.stdout_lines
+  when: dotfiles_contents.stdout_lines is defined
+  tags:
+    - dotfiles
+
+- name: Get list of dotfile packages
+  ansible.builtin.shell: "ls -d */"
+  args:
+    chdir: "{{ ansible_env.HOME }}/.dotfiles"
+  register: dotfile_packages
+  changed_when: false
+  when: dotfiles_dir.stat.exists
+  tags:
+    - dotfiles
+
 - name: Install dotfiles
-  become: true
   command: >
-    stow -v --restow */
+    stow -v --restow --target={{ ansible_env.HOME }} {{ item[:-1] }}
+  args:
+    chdir: "{{ ansible_env.HOME }}/.dotfiles"
+  with_items: "{{ dotfile_packages.stdout_lines }}"
+  when: dotfile_packages.stdout_lines is defined and dotfile_packages.stdout_lines | length > 0
   tags:
     - dotfiles
