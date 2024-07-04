@@ -2,17 +2,26 @@
   ansible.builtin.setup:
     filter: ansible_facts['os_family']
 
+  tags:
+    - ssh
+    - git-personal
 - name: Ensure Git is installed on Debian-based systems
   apt:
     name: git
     state: present
   when: ansible_facts['os_family'] == "Debian"
-
+  tags:
+    - ssh
+    - git-personal
 - name: Ensure Git is installed on Arch-based systems
   pacman:
     name: git
     state: present
   when: ansible_facts['os_family'] == "Archlinux"
+
+  tags:
+    - ssh
+    - git-personal
 
 - name: Configure Git with user name
   git_config:
@@ -20,12 +29,18 @@
     value: "h4z3m"
     scope: global
 
+  tags:
+    - ssh
+    - git-personal
 - name: Configure Git with user email
   git_config:
     name: user.email
     value: "h4z3m.private@gmail.com"
     scope: global
 
+  tags:
+    - ssh
+    - git-personal
 - name: Ensure SSH directory exists
   file:
     path: /home/{{ ansible_user_id }}/.ssh
@@ -33,6 +48,9 @@
     mode: 0700
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_id }}"
+  tags:
+    - ssh
+    - git-personal
 
 - name: Deploy SSH private key
   copy:
@@ -41,6 +59,9 @@
     mode: '0600'
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_id }}"
+  tags:
+    - ssh
+    - git-personal
 
 - name: Deploy SSH public key
   copy:
@@ -49,11 +70,17 @@
     mode: '0644'
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_id }}"
+  tags:
+    - ssh
+    - git-personal
 
 - name: Add GitHub to known hosts
   shell: ssh-keyscan -H github.com >> /home/{{ ansible_user_id }}/.ssh/known_hosts
   args:
     creates: /home/{{ ansible_user_id }}/.ssh/known_hosts
+  tags:
+    - ssh
+    - git-personal
 
 - name: Ensure known_hosts file has correct permissions
   file:
@@ -61,3 +88,6 @@
     mode: '0644'
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_id }}"
+  tags:
+    - ssh
+    - git-personal

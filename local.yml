@@ -4,6 +4,7 @@
     - ./.ssh/vault.yml
   pre_tasks:
     - name: Update cache on Debian-based systems
+      become: yes
       apt:
         update_cache: true
       when: ansible_facts['os_family'] == "Debian"
@@ -18,6 +19,7 @@
         - neovim
 
     - name: Update cache on Arch-based systems
+      become: yes
       pacman:
         update_cache: true
       when: ansible_facts['os_family'] == "Archlinux"
@@ -46,3 +48,6 @@
 
     - name: Include core setup tasks
       import_tasks: tasks/core-setup.yml
+
+    - name: Include Neovim setup tasks
+      import_tasks: tasks/nvim-setup.yml

@@ -1,7 +1,20 @@
-- name: Install ZSH
-  apt: name=zsh 
+
+---
+- name: Install Zsh on Debian-based systems
+  become: true
+  apt:
+    name: zsh
+  when: ansible_facts['os_family'] == "Debian"
   tags:
     - zsh
+- name: Install Zsh on Arch Linux
+  become: true
+  pacman:
+    name: zsh
+  when: ansible_facts['os_family'] == "Archlinux"
+  tags:
+    - zsh
+
 - name: Install shell
   become: yes
   shell: chsh -s `which zsh`
@@ -16,11 +29,9 @@
     - zsh
 
 - name: Install Oh My Zsh
-  shell: curl -L https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh | sh
+  ansible.builtin.shell: sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
   args:
-    warn: false
-  tags:
-    - zsh
+    creates: "{{ ansible_env.HOME }}/.oh-my-zsh"
 
 - name: Install zsh-autosuggestions
   ansible.builtin.git:
